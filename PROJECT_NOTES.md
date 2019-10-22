@@ -22,7 +22,7 @@ TBD
 ## Specific
 * I want to be able to dynamically present images/text…(from now on objects) to click on.
   * Show a predefined group :ok:
-  * Make objects clickable from now on
+  * Make objects clickable from now on :ok:
   * Receive selection
   * Show another predefined group
   * Receive second selection
