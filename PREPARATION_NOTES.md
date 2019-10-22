@@ -21,6 +21,14 @@ TBD
 # Objectives
 ## Specific
 - I want to be able to dynamically present images/text…(from now on objects) to click on.
+-- Show a predefined group :ok:
+-- Make objects clickable from now on
+-- Receive selection
+-- Show another predefined group
+-- Receive second selection
+-- Print both selections
+-- Return message including both selections
+-- ...
 - Those objects are presented in groups of 4, but could be more or less than that. Important is that the user has as little bias as possible.
 - What the user selects on groups (1..n) defines the objects presented on group n+1. Group 1 should also be random.
 - The amount of groups to be shown depends on the user selection.
