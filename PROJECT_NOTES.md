@@ -23,7 +23,9 @@ TBD
 * I want to be able to dynamically present images/text…(from now on objects) to click on.
   * Show a predefined group :ok:
   * Make objects clickable from now on :ok:
-  * Receive selection
+  * Receive selection :ok:
+  * Show a different site
+  * Add first unit tests
   * Show another predefined group
   * Receive second selection
   * Print both selections
