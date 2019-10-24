@@ -31,8 +31,8 @@ var now string = time.Now().String()
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl, _ := template.ParseFiles("templates/layout.html", "templates/home.html")
-	log.Println("Called home")
-	log.Println(wd)
+	//log.Println("Called home")
+	//log.Println(wd)
 	if err := tmpl.Execute(w, &wd); err != nil {
 		log.Println(err.Error())
 		http.Error(w, http.StatusText(500), 500)
@@ -48,11 +48,10 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 	wd = WebData{
 		Title:  now,
 		Image1: image_folder + "mountain002.jpg",
-		Image2: image_folder + "forrest001.jpg",
-		Image3: image_folder + "rain001.jpg",
-		Image4: image_folder + "beach001.jpg",
+		Image2: image_folder + "forrest002.jpg",
+		Image3: image_folder + "rain002.jpg",
+		Image4: image_folder + "beach002.jpg",
 	}
-	homeHandler(w, r)
 	w.WriteHeader(200)
 	w.Write([]byte("ok cool"))
 }

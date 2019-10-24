@@ -24,7 +24,7 @@ TBD
   * Show a predefined group :ok:
   * Make objects clickable from now on :ok:
   * Receive selection :ok:
-  * Show a different site
+  * Show a different site :ok:
   * Add first unit tests
   * Show another predefined group
   * Receive second selection
