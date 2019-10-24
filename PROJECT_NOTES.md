@@ -25,7 +25,8 @@ TBD
   * Make objects clickable from now on :ok:
   * Receive selection :ok:
   * Show a different site :ok:
-  * Add first unit tests
+  * Add first unit tests :ok:
+  * Add at least one test per function
   * Show another predefined group
   * Receive second selection
   * Print both selections

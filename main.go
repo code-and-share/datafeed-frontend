@@ -2,6 +2,7 @@ package main
 
 import (
 	"html/template"
+	"io"
 	"log"
 	"net/http"
 	"time"
@@ -29,7 +30,15 @@ var image_folder string = "/raw/"
 
 var now string = time.Now().String()
 
-func homeHandler(w http.ResponseWriter, r *http.Request) {
+func HealthHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+
+	io.WriteString(w, `{"alive": true}`)
+
+}
+
+func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl, _ := template.ParseFiles("templates/layout.html", "templates/home.html")
 	//log.Println("Called home")
 	//log.Println(wd)
@@ -39,7 +48,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func postHandler(w http.ResponseWriter, r *http.Request) {
+func PostHandler(w http.ResponseWriter, r *http.Request) {
 	// Must call ParseForm() before working with data
 	r.ParseForm()
 	// Log all data. Form is a map[]
@@ -61,8 +70,9 @@ func Router() *mux.Router {
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
 	router.PathPrefix("/raw/").Handler(http.StripPrefix("/raw/", http.FileServer(http.Dir("./raw/"))))
 
-	router.HandleFunc("/", homeHandler).Methods("GET")
-	router.HandleFunc("/post", postHandler).Methods("POST")
+	router.HandleFunc("/", HomeHandler).Methods("GET")
+	router.HandleFunc("/post", PostHandler).Methods("POST")
+	router.HandleFunc("/health", HealthHandler).Methods("GET")
 	return router
 }
 
