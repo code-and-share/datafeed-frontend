@@ -8,7 +8,7 @@
    function DoPost(object){
      var url = "http://0.0.0.0:9000/post"
      var xhr = new XMLHttpRequest();
-     xhr.open("POST", url, true);
+     xhr.open("POST", url, false);
      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
      xhr.send(object.id);
      console.log(xhr)
