@@ -54,7 +54,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">/home/aaf/Software/Dev/code_and_share/steps_datafeed/main.go (78.3%)</option>
+				<option value="file0">/home/aaf/Software/Dev/code_and_share/steps_datafeed/main.go (76.0%)</option>
 				
 				</select>
 			</div>
@@ -124,16 +124,26 @@ func PostHandler(w http.ResponseWriter, r *http.Request) <span class="cov8" titl
         // Log all data. Form is a map[]
         log.Println("Called post")
         log.Println(r.Form)
-        wd = WebData{
-                Title:  now,
-                Image1: image_folder + "mountain002.jpg",
-                Image2: image_folder + "forrest002.jpg",
-                Image3: image_folder + "rain002.jpg",
-                Image4: image_folder + "beach002.jpg",
-        }
-        w.WriteHeader(200)
-        w.Write([]byte("ok cool"))
-}</span>
+        if r.Form.Get("restart") == "true" </span><span class="cov0" title="0">{
+                wd = WebData{
+                        Title:  now,
+                        Image1: image_folder + "mountain001.jpg",
+                        Image2: image_folder + "forrest001.jpg",
+                        Image3: image_folder + "rain001.jpg",
+                        Image4: image_folder + "beach001.jpg",
+                }
+        }</span> else<span class="cov8" title="1"> {
+                wd = WebData{
+                        Title:  now,
+                        Image1: image_folder + "mountain002.jpg",
+                        Image2: image_folder + "forrest002.jpg",
+                        Image3: image_folder + "rain002.jpg",
+                        Image4: image_folder + "beach002.jpg",
+                }
+        }</span>
+        <span class="cov8" title="1">w.WriteHeader(200)
+        w.Write([]byte("ok cool"))</span>
+}
 
 func Router() *mux.Router <span class="cov8" title="1">{
         router := mux.NewRouter()

@@ -97,6 +97,9 @@ div#restart {
   color: #FFF;
   text-shadow: -1px 0 grey, 0 1px grey, 1px 0 grey, 0 -1px grey;
 }
+div#restart:hover {
+    cursor: pointer;
+}
 
 @media only screen and (max-width: 800px) {
   div#image_1 {

@@ -54,12 +54,22 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 	// Log all data. Form is a map[]
 	log.Println("Called post")
 	log.Println(r.Form)
-	wd = WebData{
-		Title:  now,
-		Image1: image_folder + "mountain002.jpg",
-		Image2: image_folder + "forrest002.jpg",
-		Image3: image_folder + "rain002.jpg",
-		Image4: image_folder + "beach002.jpg",
+	if r.Form.Get("restart") == "true" {
+		wd = WebData{
+			Title:  now,
+			Image1: image_folder + "mountain001.jpg",
+			Image2: image_folder + "forrest001.jpg",
+			Image3: image_folder + "rain001.jpg",
+			Image4: image_folder + "beach001.jpg",
+		}
+	} else {
+		wd = WebData{
+			Title:  now,
+			Image1: image_folder + "mountain002.jpg",
+			Image2: image_folder + "forrest002.jpg",
+			Image3: image_folder + "rain002.jpg",
+			Image4: image_folder + "beach002.jpg",
+		}
 	}
 	w.WriteHeader(200)
 	w.Write([]byte("ok cool"))

@@ -35,11 +35,21 @@
     }
 
     function DoPost(object){
+      if (object.id == "restart") {
+        console.log("restarting")
+        delCookie("session_id")
+      }
       var url = "http://0.0.0.0:9000/post"
       var xhr = new XMLHttpRequest();
       xhr.open("POST", url, false);
       xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-      xhr.send(object.id);
+      if (object.id == "restart") {
+        console.log("restarting")
+        delCookie("session_id")
+        xhr.send("restart=true");
+      } else {
+        xhr.send(object.id);
+      }
       console.log(xhr)
       console.log("sent to " + url)
       location.reload(); 
@@ -54,7 +64,6 @@
     } else {
       console.log("session id was already " + cookie_session_id)
     }
-    //delCookie("session_id")
     
   </script>
 </head>

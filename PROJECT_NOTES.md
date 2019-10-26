@@ -30,7 +30,7 @@ TBD
   * Show another predefined group :ok:
   * Save session_id cookie to identify all path :ok:
   * Add link to start new session :ok:
-  * If new session, first site again
+  * If new session, first site again :ok:
   * Receive second selection
   * Print both selections
   * Return message including both selections
