@@ -83,6 +83,20 @@ img#image_4 {
   left: 0px;
   top: 0px;
 }
+div#restart {
+  position: absolute;
+  width: 200px;
+  height: 30px;
+  bottom: 0%;
+  left: 50%;
+  margin-left: -100px; /* margin is -0.5 * dimension */
+  margin-top: -25px; 
+  font-family: arial;
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #FFF;
+  text-shadow: -1px 0 grey, 0 1px grey, 1px 0 grey, 0 -1px grey;
+}
 
 @media only screen and (max-width: 800px) {
   div#image_1 {
