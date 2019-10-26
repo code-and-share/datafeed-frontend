@@ -54,7 +54,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">/home/aaf/Software/Dev/code_and_share/steps_datafeed/main.go (13.0%)</option>
+				<option value="file0">/home/aaf/Software/Dev/code_and_share/steps_datafeed/main.go (78.3%)</option>
 				
 				</select>
 			</div>
@@ -108,7 +108,7 @@ func HealthHandler(w http.ResponseWriter, r *http.Request) <span class="cov8" ti
 
 }</span>
 
-func HomeHandler(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func HomeHandler(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         tmpl, _ := template.ParseFiles("templates/layout.html", "templates/home.html")
         //log.Println("Called home")
         //log.Println(wd)
@@ -118,7 +118,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) <span class="cov0" titl
         }</span>
 }
 
-func PostHandler(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func PostHandler(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         // Must call ParseForm() before working with data
         r.ParseForm()
         // Log all data. Form is a map[]
@@ -135,7 +135,7 @@ func PostHandler(w http.ResponseWriter, r *http.Request) <span class="cov0" titl
         w.Write([]byte("ok cool"))
 }</span>
 
-func Router() *mux.Router <span class="cov0" title="0">{
+func Router() *mux.Router <span class="cov8" title="1">{
         router := mux.NewRouter()
         router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
         router.PathPrefix("/raw/").Handler(http.StripPrefix("/raw/", http.FileServer(http.Dir("./raw/"))))
