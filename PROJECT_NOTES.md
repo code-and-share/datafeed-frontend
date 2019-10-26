@@ -27,7 +27,10 @@ TBD
   * Show a different site :ok:
   * Add first unit tests :ok:
   * Add at least one test per function :ok:
-  * Show another predefined group
+  * Show another predefined group :ok:
+  * Save session_id cookie to identify all path :ok:
+  * Add link to start new session
+  * If new session, first site again
   * Receive second selection
   * Print both selections
   * Return message including both selections
