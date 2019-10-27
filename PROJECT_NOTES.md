@@ -31,9 +31,11 @@ TBD
   * Save session_id cookie to identify all path :ok:
   * Add link to start new session :ok:
   * If new session, first site again :ok:
-  * Receive second selection
-  * Print both selections
-  * Return message including both selections
+  * Receive second selection :ok:
+  * Save selection orderly :ok:
+  * Print both selections :ok:
+  * Make object IDs numbers or get a different value to send at Javascript
+  * Return message after all phases including all selections
   * ...
 * Those objects are presented in groups of 4, but could be more or less than that. Important is that the user has as little bias as possible.
 * What the user selects on groups (1..n) defines the objects presented on group n+1. Group 1 should also be random.

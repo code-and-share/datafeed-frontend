@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"io"
 	"log"
@@ -25,6 +26,9 @@ var wd = WebData{
 	Image3: image_folder + "rain001.jpg",
 	Image4: image_folder + "beach001.jpg",
 }
+
+var phase int = 1
+var phases_results []string
 
 var image_folder string = "/raw/"
 
@@ -55,21 +59,19 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Called post")
 	log.Println(r.Form)
 	if r.Form.Get("restart") == "true" {
-		wd = WebData{
-			Title:  now,
-			Image1: image_folder + "mountain001.jpg",
-			Image2: image_folder + "forrest001.jpg",
-			Image3: image_folder + "rain001.jpg",
-			Image4: image_folder + "beach001.jpg",
-		}
+		phase = 1
 	} else {
-		wd = WebData{
-			Title:  now,
-			Image1: image_folder + "mountain002.jpg",
-			Image2: image_folder + "forrest002.jpg",
-			Image3: image_folder + "rain002.jpg",
-			Image4: image_folder + "beach002.jpg",
-		}
+		phases_results = append(phases_results, r.Form.Get("selected"))
+		phase += 1
+		log.Println(phases_results)
+	}
+	phase_string := fmt.Sprintf("%03d", phase)
+	wd = WebData{
+		Title:  now,
+		Image1: image_folder + "mountain" + phase_string + ".jpg",
+		Image2: image_folder + "forrest" + phase_string + ".jpg",
+		Image3: image_folder + "rain" + phase_string + ".jpg",
+		Image4: image_folder + "beach" + phase_string + ".jpg",
 	}
 	w.WriteHeader(200)
 	w.Write([]byte("ok cool"))

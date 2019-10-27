@@ -46,9 +46,9 @@
       if (object.id == "restart") {
         console.log("restarting")
         delCookie("session_id")
-        xhr.send("restart=true");
+        xhr.send("restart=true&selected="+object.id);
       } else {
-        xhr.send(object.id);
+        xhr.send("selected="+object.id);
       }
       console.log(xhr)
       console.log("sent to " + url)
