@@ -68,6 +68,7 @@
       setCookie("session_id", session_id, 1)
       setCookie("phase", 1, 1)
       console.log("session_id set to " + session_id)
+      window.location = "http://0.0.0.0:9000/phase/001"
     } else {
       console.log("session id was already " + cookie_session_id)
     }
