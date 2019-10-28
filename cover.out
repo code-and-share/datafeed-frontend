@@ -1,10 +1,12 @@
 mode: set
 /home/aaf/Software/Dev/code_and_share/steps_datafeed/main.go:37.60,43.2 3 1
-/home/aaf/Software/Dev/code_and_share/steps_datafeed/main.go:45.58,49.45 2 1
-/home/aaf/Software/Dev/code_and_share/steps_datafeed/main.go:49.45,52.3 2 0
-/home/aaf/Software/Dev/code_and_share/steps_datafeed/main.go:55.58,61.37 4 1
-/home/aaf/Software/Dev/code_and_share/steps_datafeed/main.go:68.2,77.28 4 1
-/home/aaf/Software/Dev/code_and_share/steps_datafeed/main.go:61.37,63.3 1 0
-/home/aaf/Software/Dev/code_and_share/steps_datafeed/main.go:63.8,67.3 3 1
-/home/aaf/Software/Dev/code_and_share/steps_datafeed/main.go:80.27,89.2 7 1
-/home/aaf/Software/Dev/code_and_share/steps_datafeed/main.go:91.13,95.2 3 0
+/home/aaf/Software/Dev/code_and_share/steps_datafeed/main.go:45.58,56.45 3 1
+/home/aaf/Software/Dev/code_and_share/steps_datafeed/main.go:56.45,59.3 2 0
+/home/aaf/Software/Dev/code_and_share/steps_datafeed/main.go:62.59,74.45 4 0
+/home/aaf/Software/Dev/code_and_share/steps_datafeed/main.go:74.45,77.3 2 0
+/home/aaf/Software/Dev/code_and_share/steps_datafeed/main.go:80.58,86.37 4 1
+/home/aaf/Software/Dev/code_and_share/steps_datafeed/main.go:93.2,94.28 2 1
+/home/aaf/Software/Dev/code_and_share/steps_datafeed/main.go:86.37,88.3 1 0
+/home/aaf/Software/Dev/code_and_share/steps_datafeed/main.go:88.8,92.3 3 1
+/home/aaf/Software/Dev/code_and_share/steps_datafeed/main.go:97.27,107.2 8 1
+/home/aaf/Software/Dev/code_and_share/steps_datafeed/main.go:109.13,113.2 3 0

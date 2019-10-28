@@ -43,6 +43,31 @@ func HealthHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
+	wd = WebData{
+		Title:  now,
+		Image1: image_folder + "mountain001.jpg",
+		Image2: image_folder + "forrest001.jpg",
+		Image3: image_folder + "rain001.jpg",
+		Image4: image_folder + "beach001.jpg",
+	}
+	tmpl, _ := template.ParseFiles("templates/layout.html", "templates/home.html")
+	//log.Println("Called home")
+	//log.Println(wd)
+	if err := tmpl.Execute(w, &wd); err != nil {
+		log.Println(err.Error())
+		http.Error(w, http.StatusText(500), 500)
+	}
+}
+
+func PhaseHandler(w http.ResponseWriter, r *http.Request) {
+	phase_string := fmt.Sprintf("%03d", phase)
+	wd = WebData{
+		Title:  now,
+		Image1: image_folder + "mountain" + phase_string + ".jpg",
+		Image2: image_folder + "forrest" + phase_string + ".jpg",
+		Image3: image_folder + "rain" + phase_string + ".jpg",
+		Image4: image_folder + "beach" + phase_string + ".jpg",
+	}
 	tmpl, _ := template.ParseFiles("templates/layout.html", "templates/home.html")
 	//log.Println("Called home")
 	//log.Println(wd)
@@ -65,14 +90,6 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 		phase += 1
 		log.Println(phases_results)
 	}
-	phase_string := fmt.Sprintf("%03d", phase)
-	wd = WebData{
-		Title:  now,
-		Image1: image_folder + "mountain" + phase_string + ".jpg",
-		Image2: image_folder + "forrest" + phase_string + ".jpg",
-		Image3: image_folder + "rain" + phase_string + ".jpg",
-		Image4: image_folder + "beach" + phase_string + ".jpg",
-	}
 	w.WriteHeader(200)
 	w.Write([]byte("ok cool"))
 }
@@ -83,6 +100,7 @@ func Router() *mux.Router {
 	router.PathPrefix("/raw/").Handler(http.StripPrefix("/raw/", http.FileServer(http.Dir("./raw/"))))
 
 	router.HandleFunc("/", HomeHandler).Methods("GET")
+	router.HandleFunc("/phase/{v1:[0-9]{3}}", PhaseHandler).Methods("GET")
 	router.HandleFunc("/post", PostHandler).Methods("POST")
 	router.HandleFunc("/health", HealthHandler).Methods("GET")
 	return router

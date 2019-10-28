@@ -34,6 +34,11 @@ TBD
   * Receive second selection :ok:
   * Save selection orderly :ok:
   * Print both selections :ok:
+    * ERROR: At this point my code just sends the same code to anyone going for the main page. I need to move this logic around:
+    * Save current phase in cookies :ok:
+    * Selection calls a different url :ok:
+    * First page is redirected to phase/001
+    * Array of results becomes array of objects [ session_id, results[]]
   * Make object IDs numbers or get a different value to send at Javascript
   * Return message after all phases including all selections
   * ...

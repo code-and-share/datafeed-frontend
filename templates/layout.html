@@ -38,6 +38,7 @@
       if (object.id == "restart") {
         console.log("restarting")
         delCookie("session_id")
+        setCookie("phase", 1, 1)
       }
       var url = "http://0.0.0.0:9000/post"
       var xhr = new XMLHttpRequest();
@@ -52,7 +53,12 @@
       }
       console.log(xhr)
       console.log("sent to " + url)
-      location.reload(); 
+      //location.reload(); 
+      current_phase = parseInt(getCookie("phase"))
+      next_phase = String(current_phase + 1).padStart(3, '0')
+      console.log("Next phase: " + next_phase)
+      setCookie("phase", current_phase + 1, 1)
+      window.location = "http://0.0.0.0:9000/phase/"+next_phase;
     }
 
     var cookie_session_id = getCookie("session_id")
@@ -60,6 +66,7 @@
       max_id = 999999999999999
       session_id = Math.floor(Math.random() * Math.floor(max_id));
       setCookie("session_id", session_id, 1)
+      setCookie("phase", 1, 1)
       console.log("session_id set to " + session_id)
     } else {
       console.log("session id was already " + cookie_session_id)
