@@ -31,12 +31,15 @@ TBD
   * Save session_id cookie to identify all path :ok:
   * Add link to start new session :ok:
   * If new session, first site again :ok:
+  * If session cookie does not exist, new session_id and first site again :ok:
+  * If phase cookie does not exist, phase is 1 so first site again :ok:
   * Receive second selection :ok:
   * Save selection orderly :ok:
   * Save current phase in cookies :ok:
-  * Array of results becomes array of objects [ session_id, results[]]
-  * Save selections by session_id, only show those
-  * Print only selections for this session_id
+  * Array of results becomes array of objects [ session_id, results[]] :ok:
+  * Save all selections by session_id :ok:
+  * Print only selections for this session_id :ok:
+  * Make all tests pass again
   * Make object IDs numbers or get a different value to send at Javascript
   * Return message after all phases including all selections
   * ...

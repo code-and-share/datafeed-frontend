@@ -34,6 +34,13 @@
       return "";
     }
 
+    function newSessionId() {
+      max_id = 999999999999999
+      session_id = Math.floor(Math.random() * Math.floor(max_id));
+      setCookie("session_id", session_id, 1)
+      console.log("session_id set to " + session_id)
+    }
+
     function DoPost(object){
       if (object.id == "restart") {
         console.log("restarting")
@@ -47,30 +54,39 @@
       if (object.id == "restart") {
         console.log("restarting")
         delCookie("session_id")
+        newSessionId()
+        delCookie("phase")
+        setCookie("phase", 1, 1)
         xhr.send("restart=true&selected="+object.id);
       } else {
         xhr.send("selected="+object.id);
+        current_phase = parseInt(getCookie("phase"))
+        next_phase = String(current_phase + 1).padStart(3, '0')
+        console.log("Next phase: " + next_phase)
+        setCookie("phase", current_phase + 1, 1)
       }
       console.log(xhr)
       console.log("sent to " + url)
-      //location.reload(); 
-      current_phase = parseInt(getCookie("phase"))
-      next_phase = String(current_phase + 1).padStart(3, '0')
-      console.log("Next phase: " + next_phase)
-      setCookie("phase", current_phase + 1, 1)
-      window.location = "http://0.0.0.0:9000/phase/"+next_phase;
+      location.reload(); 
     }
 
     var cookie_session_id = getCookie("session_id")
     if (cookie_session_id == "") {
-      max_id = 999999999999999
-      session_id = Math.floor(Math.random() * Math.floor(max_id));
-      setCookie("session_id", session_id, 1)
+      newSessionId()
       setCookie("phase", 1, 1)
-      console.log("session_id set to " + session_id)
-      window.location = "http://0.0.0.0:9000/phase/001"
+      location.reload(); 
+      //window.location = "http://0.0.0.0:9000/phase/001"
     } else {
       console.log("session id was already " + cookie_session_id)
+    }
+    var cookie_phase = getCookie("phase")
+    if (cookie_phase == "") {
+      setCookie("phase", 1, 1)
+      console.log("phase set to " + session_id)
+      location.reload(); 
+      //window.location = "http://0.0.0.0:9000/phase/001"
+    } else {
+      console.log("phase was already " + cookie_phase)
     }
     
   </script>
