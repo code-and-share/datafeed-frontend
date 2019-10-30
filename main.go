@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	//"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -18,6 +19,10 @@ type WebData struct {
 	Image2 string
 	Image3 string
 	Image4 string
+}
+
+type ResultData struct {
+	Text template.HTML
 }
 
 type Selection struct {
@@ -42,6 +47,10 @@ var wd = WebData{
 	Image4: image_folder + "beach001.jpg",
 }
 
+var rd = ResultData{
+	Text: template.HTML("Empty"),
+}
+
 var phases_results []string
 
 var image_folder string = "/raw/"
@@ -57,30 +66,40 @@ func HealthHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
+	var session = ""
+	cookie_session, _ := r.Cookie("session_id")
+	if cookie_session != nil {
+		session = cookie_session.Value
+	}
 	cookie_phase, _ := r.Cookie("phase")
 	if cookie_phase == nil {
 		phase = 1
 	} else {
-		phase, _ = strconv.Atoi(cookie_phase.Value)
+		var err error
+		phase, err = strconv.Atoi(cookie_phase.Value)
+		if err != nil {
+			phase = 1
+		}
 	}
-	phase_string := fmt.Sprintf("%03d", phase)
-	wd = WebData{
-		Title:  phase_string,
-		Image1: image_folder + "mountain" + phase_string + ".jpg",
-		Image2: image_folder + "forest" + phase_string + ".jpg",
-		Image3: image_folder + "rain" + phase_string + ".jpg",
-		Image4: image_folder + "beach" + phase_string + ".jpg",
-	}
-	tmpl, _ := template.ParseFiles("templates/layout.html", "templates/home.html")
-	if err := tmpl.Execute(w, &wd); err != nil {
-		log.Println(err.Error())
-		http.Error(w, http.StatusText(500), 500)
-	}
+	PhaseBackend(session, phase, w)
 }
 
 func PostHandler(w http.ResponseWriter, r *http.Request) {
+	var session = ""
 	cookie_session, _ := r.Cookie("session_id")
+	if cookie_session != nil {
+		session = cookie_session.Value
+	}
 	cookie_phase, _ := r.Cookie("phase")
+	if cookie_phase == nil {
+		phase = 1
+	} else {
+		var err error
+		phase, err = strconv.Atoi(cookie_phase.Value)
+		if err != nil {
+			phase = 1
+		}
+	}
 	// Must call ParseForm() before working with data
 	r.ParseForm()
 	// Log all data. Form is a map[]
@@ -89,9 +108,9 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Form.Get("restart") != "true" {
 		//phases_results = append(phases_results, r.Form.Get("selected"))
 		//log.Println(phases_results)
-		ManageResult(cookie_session.Value, cookie_phase.Value, r.Form.Get("selected"))
+		ManageResult(session, phase, r.Form.Get("selected"))
 	}
-	log.Println("phase cookie says " + cookie_phase.Value)
+	log.Println("phase cookie says " + strconv.Itoa(phase))
 	w.WriteHeader(200)
 	w.Write([]byte("ok cool"))
 }
@@ -105,21 +124,19 @@ func ContainsResultSession(session string) (bool, int) {
 	return false, 0
 }
 
-func ManageResult(session string, phase string, selected string) {
+func ManageResult(session string, phase int, selected string) {
 	session_exists, session_ix := ContainsResultSession(session)
 	if session_exists {
 		log.Println("session " + session + " exists")
-		phase_int, _ := strconv.Atoi(phase)
 		this_selection := Selection{
-			position: phase_int,
+			position: phase,
 			selected: selected,
 		}
 		results[session_ix].selections = append(results[session_ix].selections, this_selection)
 		log.Println(results[session_ix])
 	} else {
-		phase_int, _ := strconv.Atoi(phase)
 		this_selection := Selection{
-			position: phase_int,
+			position: phase,
 			selected: selected,
 		}
 		selections := []Selection{}
@@ -142,6 +159,43 @@ func Router() *mux.Router {
 	router.HandleFunc("/post", PostHandler).Methods("POST")
 	router.HandleFunc("/health", HealthHandler).Methods("GET")
 	return router
+}
+
+func PhaseBackend(session string, phase int, w http.ResponseWriter) {
+	switch phase {
+	case 1, 2, 3, 4:
+		phase_string := fmt.Sprintf("%03d", phase)
+		wd = WebData{
+			Title:  phase_string,
+			Image1: image_folder + "mountain" + phase_string + ".jpg",
+			Image2: image_folder + "forest" + phase_string + ".jpg",
+			Image3: image_folder + "rain" + phase_string + ".jpg",
+			Image4: image_folder + "beach" + phase_string + ".jpg",
+		}
+		tmpl, _ := template.ParseFiles("templates/selection_layout.html", "templates/selection.html")
+		if err := tmpl.Execute(w, &wd); err != nil {
+			log.Println(err.Error())
+			http.Error(w, http.StatusText(500), 500)
+		}
+	default:
+		// TODO: Use a second template for the results and Parse it here
+		session_exists, session_ix := ContainsResultSession(session)
+		if session_exists {
+			result_all := `Here are your selections: <br>`
+			selections_matrix := results[session_ix].selections
+			for _, v := range selections_matrix {
+				result_all = result_all + strconv.Itoa(v.position) + ` -> ` + v.selected + `<br>`
+			}
+			rd = ResultData{
+				Text: template.HTML(result_all),
+			}
+		}
+		tmpl, _ := template.ParseFiles("templates/result_layout.html", "templates/result.html")
+		if err := tmpl.Execute(w, &rd); err != nil {
+			log.Println(err.Error())
+			http.Error(w, http.StatusText(500), 500)
+		}
+	}
 }
 
 func main() {

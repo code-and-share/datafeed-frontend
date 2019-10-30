@@ -24,7 +24,7 @@ div#image_1 {
   top: 0px;
   background-color: #4FF;
 }
-img#image_1 {
+img.image_1 {
   position: absolute;
   max-width:100%;
   width: auto;
@@ -41,7 +41,7 @@ div#image_2 {
   top: 0px;
   background-color: #44F;
 }
-img#image_2 {
+img.image_2 {
   position: absolute;
   max-width:100%;
   width: auto;
@@ -58,7 +58,7 @@ div#image_3 {
   bottom: 0px;
   background-color: #F4F;
 }
-img#image_3 {
+img.image_3 {
   position: absolute;
   max-width:100%;
   width: auto;
@@ -75,7 +75,7 @@ div#image_4 {
   bottom: 0px;
   background-color: #FF4;
 }
-img#image_4 {
+img.image_4 {
   position: absolute;
   max-width:100%;
   width: auto;

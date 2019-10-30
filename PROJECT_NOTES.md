@@ -39,9 +39,12 @@ TBD
   * Array of results becomes array of objects [ session_id, results[]] :ok:
   * Save all selections by session_id :ok:
   * Print only selections for this session_id :ok:
-  * Make all tests pass again
-  * Make object IDs numbers or get a different value to send at Javascript
-  * Return message after all phases including all selections
+  * Build a standard number of phases and a results page at the end :ok:
+  * Make all tests pass again :ok:
+  * Make object IDs numbers or get a different value to send at Javascript :ok:
+  * Return message after all phases including all selections :ok:
+  * Beautify result
+  * Add a backend service that sends the objects to show
   * ...
 * Those objects are presented in groups of 4, but could be more or less than that. Important is that the user has as little bias as possible.
 * What the user selects on groups (1..n) defines the objects presented on group n+1. Group 1 should also be random.
