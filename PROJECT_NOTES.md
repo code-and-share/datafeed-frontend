@@ -47,6 +47,8 @@ TBD
   * Use the database instead :ok:
   * Take the full path from the object -> select object content from the JSON lists
   * Get the new function tested
+  * Containerize the app
+  * Docker compose to also get DB up
   * Add a backend service that chooses the path to follow by the main program
   * Beautify result
   * ...
