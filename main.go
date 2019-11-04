@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"io"
@@ -164,17 +165,9 @@ func Router() *mux.Router {
 }
 
 func PhaseBackend(session string, phase int, w http.ResponseWriter) {
-	PhaseDB(session, phase)
 	switch phase {
 	case 1, 2, 3, 4:
-		phase_string := fmt.Sprintf("%03d", phase)
-		wd = WebData{
-			Title:  phase_string,
-			Image1: image_folder + "mountain" + phase_string + ".jpg",
-			Image2: image_folder + "forest" + phase_string + ".jpg",
-			Image3: image_folder + "rain" + phase_string + ".jpg",
-			Image4: image_folder + "beach" + phase_string + ".jpg",
-		}
+		wd = PhaseDB(session, phase)
 		tmpl, _ := template.ParseFiles("templates/selection_layout.html", "templates/selection.html")
 		if err := tmpl.Execute(w, &wd); err != nil {
 			log.Println(err.Error())
@@ -201,26 +194,41 @@ func PhaseBackend(session string, phase int, w http.ResponseWriter) {
 	}
 }
 
-func PhaseDB(session string, phase int) {
+func PhaseDB(session string, phase int) WebData {
+	var chosen_path = "testpath_001"
 	db, err := sql.Open("mysql", "root:secret@tcp(127.0.0.1:3306)/Paths")
 	if err != nil {
 		log.Println("ERROR: " + err.Error())
 	}
 	defer db.Close()
-	select_phase, err := db.Query("SELECT name from paths;")
-	defer select_phase.Close()
 
-	// if there is an error inserting, handle it
+	// TODO: build a select to get the object content, depending on the content of teh JSON
+	select_phase, err := db.Query("SELECT phases.objects FROM paths, phases WHERE paths.phase_id = phases.id AND paths.phase_order = " + strconv.Itoa(phase) + " AND paths.name = '" + chosen_path + "';")
+	defer select_phase.Close()
 	if err != nil {
 		log.Println("ERROR: " + err.Error())
 	}
+	var JSONmapped_objects map[string]interface{}
 	for select_phase.Next() {
-		var name string
-		if err := select_phase.Scan(&name); err != nil {
+		var objects string
+
+		if err := select_phase.Scan(&objects); err != nil {
 			log.Println("ERROR: " + err.Error())
 		}
-		log.Println("Result: " + name)
+
+		log.Println("Result: " + objects)
+		json.Unmarshal([]byte(objects), &JSONmapped_objects)
 	}
+	phase_string := fmt.Sprintf("%03d", phase)
+	// TODO: use the object content instead of this jpg suffix
+	result := WebData{
+		Title:  phase_string,
+		Image1: image_folder + JSONmapped_objects["1"].(string) + ".jpg",
+		Image2: image_folder + JSONmapped_objects["2"].(string) + ".jpg",
+		Image3: image_folder + JSONmapped_objects["3"].(string) + ".jpg",
+		Image4: image_folder + JSONmapped_objects["4"].(string) + ".jpg",
+	}
+	return result
 	// be careful deferring Queries if you are using transactions
 
 }

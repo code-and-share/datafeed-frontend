@@ -44,8 +44,10 @@ TBD
   * Make object IDs numbers or get a different value to send at Javascript :ok:
   * Return message after all phases including all selections :ok:
   * Add a database that stores the objects to show :ok:
-  * Use the database instead
-  * Add a backend service that sends the objects to show
+  * Use the database instead :ok:
+  * Take the full path from the object -> select object content from the JSON lists
+  * Get the new function tested
+  * Add a backend service that chooses the path to follow by the main program
   * Beautify result
   * ...
 * Those objects are presented in groups of 4, but could be more or less than that. Important is that the user has as little bias as possible.
