@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"html/template"
 	"io"
@@ -10,6 +11,7 @@ import (
 	//"strings"
 	"time"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 )
 
@@ -162,6 +164,7 @@ func Router() *mux.Router {
 }
 
 func PhaseBackend(session string, phase int, w http.ResponseWriter) {
+	PhaseDB(session, phase)
 	switch phase {
 	case 1, 2, 3, 4:
 		phase_string := fmt.Sprintf("%03d", phase)
@@ -196,6 +199,30 @@ func PhaseBackend(session string, phase int, w http.ResponseWriter) {
 			http.Error(w, http.StatusText(500), 500)
 		}
 	}
+}
+
+func PhaseDB(session string, phase int) {
+	db, err := sql.Open("mysql", "root:secret@tcp(127.0.0.1:3306)/Paths")
+	if err != nil {
+		log.Println("ERROR: " + err.Error())
+	}
+	defer db.Close()
+	select_phase, err := db.Query("SELECT name from paths;")
+	defer select_phase.Close()
+
+	// if there is an error inserting, handle it
+	if err != nil {
+		log.Println("ERROR: " + err.Error())
+	}
+	for select_phase.Next() {
+		var name string
+		if err := select_phase.Scan(&name); err != nil {
+			log.Println("ERROR: " + err.Error())
+		}
+		log.Println("Result: " + name)
+	}
+	// be careful deferring Queries if you are using transactions
+
 }
 
 func main() {
