@@ -45,11 +45,13 @@ TBD
   * Return message after all phases including all selections :ok:
   * Add a database that stores the objects to show :ok:
   * Use the database instead :ok:
-  * Take the full path from the object -> select object content from the JSON lists
+  * Take the full path from the object -> select object content from the JSON lists :ok:
   * Get the new function tested
   * Containerize the app
   * Docker compose to also get DB up
   * Add a backend service that chooses the path to follow by the main program
+  * Make Webdata receive a flexible amount of objects
+  * Adapt Css to the amount of objects received
   * Beautify result
   * ...
 * Those objects are presented in groups of 4, but could be more or less than that. Important is that the user has as little bias as possible.

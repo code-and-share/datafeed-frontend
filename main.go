@@ -2,7 +2,7 @@ package main
 
 import (
 	"database/sql"
-	"encoding/json"
+	//"encoding/json"
 	"fmt"
 	"html/template"
 	"io"
@@ -31,6 +31,10 @@ type ResultData struct {
 type Selection struct {
 	position int
 	selected string
+}
+type PhaseObject struct {
+	position int
+	object   string
 }
 
 type Results struct {
@@ -195,38 +199,42 @@ func PhaseBackend(session string, phase int, w http.ResponseWriter) {
 }
 
 func PhaseDB(session string, phase int) WebData {
-	var chosen_path = "testpath_001"
+	var chosen_path = "testpath_002"
 	db, err := sql.Open("mysql", "root:secret@tcp(127.0.0.1:3306)/Paths")
 	if err != nil {
 		log.Println("ERROR: " + err.Error())
 	}
 	defer db.Close()
 
-	// TODO: build a select to get the object content, depending on the content of teh JSON
-	select_phase, err := db.Query("SELECT phases.objects FROM paths, phases WHERE paths.phase_id = phases.id AND paths.phase_order = " + strconv.Itoa(phase) + " AND paths.name = '" + chosen_path + "';")
+	select_phase, err := db.Query("SELECT t1.pos, objects.content FROM objects, phases, JSON_TABLE(phases.objects, '$[*]' COLUMNS(pos INT PATH '$.position', obj VARCHAR(255) PATH '$.object')) AS t1 WHERE phases.id in (SELECT phase_id from paths WHERE name = '" + chosen_path + "' AND phase_order = " + strconv.Itoa(phase) + ") AND objects.name = t1.obj COLLATE utf8mb4_general_ci;")
 	defer select_phase.Close()
 	if err != nil {
 		log.Println("ERROR: " + err.Error())
 	}
-	var JSONmapped_objects map[string]interface{}
+	var objects []PhaseObject
 	for select_phase.Next() {
-		var objects string
+		var position int
+		var object string
 
-		if err := select_phase.Scan(&objects); err != nil {
+		if err := select_phase.Scan(&position, &object); err != nil {
 			log.Println("ERROR: " + err.Error())
 		}
 
-		log.Println("Result: " + objects)
-		json.Unmarshal([]byte(objects), &JSONmapped_objects)
+		this_object := PhaseObject{
+			position: position,
+			object:   object,
+		}
+		objects = append(objects, this_object)
 	}
+	log.Println(objects)
 	phase_string := fmt.Sprintf("%03d", phase)
-	// TODO: use the object content instead of this jpg suffix
+	// TODO: use the object position instead of a fixed index
 	result := WebData{
 		Title:  phase_string,
-		Image1: image_folder + JSONmapped_objects["1"].(string) + ".jpg",
-		Image2: image_folder + JSONmapped_objects["2"].(string) + ".jpg",
-		Image3: image_folder + JSONmapped_objects["3"].(string) + ".jpg",
-		Image4: image_folder + JSONmapped_objects["4"].(string) + ".jpg",
+		Image1: image_folder + objects[0].object,
+		Image2: image_folder + objects[1].object,
+		Image3: image_folder + objects[2].object,
+		Image4: image_folder + objects[3].object,
 	}
 	return result
 	// be careful deferring Queries if you are using transactions
