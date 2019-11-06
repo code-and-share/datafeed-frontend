@@ -3,13 +3,13 @@ package main
 import (
 	"database/sql"
 	//"encoding/json"
+	"errors"
 	"fmt"
 	"html/template"
 	"io"
 	"log"
 	"net/http"
 	"strconv"
-	//"strings"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -171,7 +171,11 @@ func Router() *mux.Router {
 func PhaseBackend(session string, phase int, w http.ResponseWriter) {
 	switch phase {
 	case 1, 2, 3, 4:
-		wd = PhaseDB(session, phase)
+		var err error
+		wd, err = PhaseDB(session, phase)
+		if err != nil {
+			log.Println("ERROR: " + err.Error())
+		}
 		tmpl, _ := template.ParseFiles("templates/selection_layout.html", "templates/selection.html")
 		if err := tmpl.Execute(w, &wd); err != nil {
 			log.Println(err.Error())
@@ -198,45 +202,62 @@ func PhaseBackend(session string, phase int, w http.ResponseWriter) {
 	}
 }
 
-func PhaseDB(session string, phase int) WebData {
+func PhaseDB(session string, phase int) (WebData, error) {
 	var chosen_path = "testpath_002"
-	db, err := sql.Open("mysql", "root:secret@tcp(127.0.0.1:3306)/Paths")
+	var DBerr error
+	var result WebData
+	phase_string := fmt.Sprintf("%03d", phase)
+	dbInfo := "root:secret@tcp(127.0.0.1:3306)/Paths"
+	db, err := sql.Open("mysql", dbInfo)
 	if err != nil {
+		DBerr = errors.New("Error running the query: " + err.Error())
 		log.Println("ERROR: " + err.Error())
 	}
 	defer db.Close()
 
-	select_phase, err := db.Query("SELECT t1.pos, objects.content FROM objects, phases, JSON_TABLE(phases.objects, '$[*]' COLUMNS(pos INT PATH '$.position', obj VARCHAR(255) PATH '$.object')) AS t1 WHERE phases.id in (SELECT phase_id from paths WHERE name = '" + chosen_path + "' AND phase_order = " + strconv.Itoa(phase) + ") AND objects.name = t1.obj COLLATE utf8mb4_general_ci;")
-	defer select_phase.Close()
+	err = db.Ping()
 	if err != nil {
+		DBerr = errors.New("Error reaching the DB: " + err.Error())
 		log.Println("ERROR: " + err.Error())
-	}
-	var objects []PhaseObject
-	for select_phase.Next() {
-		var position int
-		var object string
-
-		if err := select_phase.Scan(&position, &object); err != nil {
+	} else {
+		select_phase, err := db.Query("SELECT t1.pos, objects.content FROM objects, phases, JSON_TABLE(phases.objects, '$[*]' COLUMNS(pos INT PATH '$.position', obj VARCHAR(255) PATH '$.object')) AS t1 WHERE phases.id in (SELECT phase_id from paths WHERE name = '" + chosen_path + "' AND phase_order = " + strconv.Itoa(phase) + ") AND objects.name = t1.obj COLLATE utf8mb4_general_ci;")
+		defer select_phase.Close()
+		if err != nil {
+			DBerr = errors.New("Error running the query: " + err.Error())
 			log.Println("ERROR: " + err.Error())
 		}
+		fmt.Println("########################HERE")
+		var objects []PhaseObject
+		for select_phase.Next() {
+			var position int
+			var object string
 
-		this_object := PhaseObject{
-			position: position,
-			object:   object,
+			if err := select_phase.Scan(&position, &object); err != nil {
+				log.Println("ERROR: " + err.Error())
+			}
+
+			this_object := PhaseObject{
+				position: position,
+				object:   object,
+			}
+			objects = append(objects, this_object)
 		}
-		objects = append(objects, this_object)
+		log.Println(objects)
+		// TODO: use the object position instead of a fixed index
+		result = WebData{
+			Title:  phase_string,
+			Image1: image_folder + objects[0].object,
+			Image2: image_folder + objects[1].object,
+			Image3: image_folder + objects[2].object,
+			Image4: image_folder + objects[3].object,
+		}
 	}
-	log.Println(objects)
-	phase_string := fmt.Sprintf("%03d", phase)
-	// TODO: use the object position instead of a fixed index
-	result := WebData{
-		Title:  phase_string,
-		Image1: image_folder + objects[0].object,
-		Image2: image_folder + objects[1].object,
-		Image3: image_folder + objects[2].object,
-		Image4: image_folder + objects[3].object,
-	}
-	return result
+
+	fmt.Print("result:")
+	fmt.Println(result)
+	fmt.Print("DBerr:")
+	fmt.Println(DBerr)
+	return result, DBerr
 	// be careful deferring Queries if you are using transactions
 
 }
