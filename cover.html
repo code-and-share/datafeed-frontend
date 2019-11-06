@@ -54,7 +54,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">/home/aaf/Software/Dev/code_and_share/steps_datafeed/main.go (64.9%)</option>
+				<option value="file0">/home/aaf/Software/Dev/code_and_share/steps_datafeed/main.go (46.4%)</option>
 				
 				</select>
 			</div>
@@ -79,8 +79,8 @@ import (
         "io"
         "log"
         "net/http"
+        "os"
         "strconv"
-        "time"
 
         _ "github.com/go-sql-driver/mysql"
         "github.com/gorilla/mux"
@@ -129,11 +129,44 @@ var rd = ResultData{
         Text: template.HTML("Empty"),
 }
 
-var phases_results []string
-
 var image_folder string = "/raw/"
 
-var now string = time.Now().String()
+var database_connection string
+
+func GetVars() <span class="cov0" title="0">{
+        // Some env vars have proper defaults
+        db_host := os.Getenv("DB_HOST")
+        if db_host == "" </span><span class="cov0" title="0">{
+                db_host = "0.0.0.0"
+                log.Println("INFO: Using default " + db_host + " as DB_HOST")
+        }</span>
+        <span class="cov0" title="0">db_port := os.Getenv("DB_PORT")
+        if db_port == "" </span><span class="cov0" title="0">{
+                db_port = "3306"
+                log.Println("INFO: Using default " + db_port + " as DB_PORT")
+        }</span>
+        // For the rest, we need to exit if they are not set up
+        <span class="cov0" title="0">db_user := os.Getenv("DB_USER")
+        if db_user == "" </span><span class="cov0" title="0">{
+                log.Println("ERROR: DB_USER environment variable is not set")
+                log.Println("  Remember to set the following variables: DB_USER, DB_PASS, DB_HOST and DB_NAME")
+                os.Exit(1)
+        }</span>
+        <span class="cov0" title="0">db_pass := os.Getenv("DB_PASS")
+        if db_pass == "" </span><span class="cov0" title="0">{
+                log.Println("ERROR: DB_PASS environment variable is not set")
+                log.Println("  Remember to set the following variables: DB_USER, DB_PASS, DB_HOST and DB_NAME")
+                os.Exit(1)
+        }</span>
+        <span class="cov0" title="0">db_name := os.Getenv("DB_NAME")
+        if db_name == "" </span><span class="cov0" title="0">{
+                log.Println("ERROR: DB_NAME environment variable is not set")
+                log.Println("  Remember to set the following variables: DB_USER, DB_PASS, DB_HOST and DB_NAME")
+                os.Exit(1)
+        }</span>
+
+        <span class="cov0" title="0">database_connection = db_user + ":" + db_pass + "@tcp(" + db_host + ":" + db_port + ")/" + db_name</span>
+}
 
 func HealthHandler(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.WriteHeader(http.StatusOK)
@@ -184,8 +217,6 @@ func PostHandler(w http.ResponseWriter, r *http.Request) <span class="cov8" titl
         log.Println("Called post")
         log.Println(r.Form)
         if r.Form.Get("restart") != "true" </span><span class="cov8" title="1">{
-                //phases_results = append(phases_results, r.Form.Get("selected"))
-                //log.Println(phases_results)
                 ManageResult(session, phase, r.Form.Get("selected"))
         }</span>
         <span class="cov8" title="1">log.Println("phase cookie says " + strconv.Itoa(phase))
@@ -244,7 +275,7 @@ func PhaseBackend(session string, phase int, w http.ResponseWriter) <span class=
         case 1, 2, 3, 4:<span class="cov8" title="1">
                 var err error
                 wd, err = PhaseDB(session, phase)
-                if err != nil </span><span class="cov0" title="0">{
+                if err != nil </span><span class="cov8" title="1">{
                         log.Println("ERROR: " + err.Error())
                 }</span>
                 <span class="cov8" title="1">tmpl, _ := template.ParseFiles("templates/selection_layout.html", "templates/selection.html")
@@ -278,8 +309,7 @@ func PhaseDB(session string, phase int) (WebData, error) <span class="cov8" titl
         var DBerr error
         var result WebData
         phase_string := fmt.Sprintf("%03d", phase)
-        dbInfo := "root:secret@tcp(127.0.0.1:3306)/Paths"
-        db, err := sql.Open("mysql", dbInfo)
+        db, err := sql.Open("mysql", database_connection)
         if err != nil </span><span class="cov0" title="0">{
                 DBerr = errors.New("Error running the query: " + err.Error())
                 log.Println("ERROR: " + err.Error())
@@ -287,18 +317,18 @@ func PhaseDB(session string, phase int) (WebData, error) <span class="cov8" titl
         <span class="cov8" title="1">defer db.Close()
 
         err = db.Ping()
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 DBerr = errors.New("Error reaching the DB: " + err.Error())
                 log.Println("ERROR: " + err.Error())
-        }</span> else<span class="cov8" title="1"> {
+        }</span> else<span class="cov0" title="0"> {
                 select_phase, err := db.Query("SELECT t1.pos, objects.content FROM objects, phases, JSON_TABLE(phases.objects, '$[*]' COLUMNS(pos INT PATH '$.position', obj VARCHAR(255) PATH '$.object')) AS t1 WHERE phases.id in (SELECT phase_id from paths WHERE name = '" + chosen_path + "' AND phase_order = " + strconv.Itoa(phase) + ") AND objects.name = t1.obj COLLATE utf8mb4_general_ci;")
                 defer select_phase.Close()
                 if err != nil </span><span class="cov0" title="0">{
                         DBerr = errors.New("Error running the query: " + err.Error())
                         log.Println("ERROR: " + err.Error())
                 }</span>
-                <span class="cov8" title="1">var objects []PhaseObject
-                for select_phase.Next() </span><span class="cov8" title="1">{
+                <span class="cov0" title="0">var objects []PhaseObject
+                for select_phase.Next() </span><span class="cov0" title="0">{
                         var position int
                         var object string
 
@@ -306,13 +336,13 @@ func PhaseDB(session string, phase int) (WebData, error) <span class="cov8" titl
                                 log.Println("ERROR: " + err.Error())
                         }</span>
 
-                        <span class="cov8" title="1">this_object := PhaseObject{
+                        <span class="cov0" title="0">this_object := PhaseObject{
                                 position: position,
                                 object:   object,
                         }
                         objects = append(objects, this_object)</span>
                 }
-                <span class="cov8" title="1">log.Println(objects)
+                <span class="cov0" title="0">log.Println(objects)
                 // TODO: use the object position instead of a fixed index
                 result = WebData{
                         Title:  phase_string,
@@ -334,6 +364,7 @@ func PhaseDB(session string, phase int) (WebData, error) <span class="cov8" titl
 
 func main() <span class="cov0" title="0">{
         PORT := "9000"
+        GetVars()
         log.Println("Serving on port " + PORT + "...")
         log.Fatal(http.ListenAndServe(":"+PORT, Router()))
 }</span>

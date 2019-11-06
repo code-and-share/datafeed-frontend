@@ -9,8 +9,8 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
-	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
@@ -59,11 +59,51 @@ var rd = ResultData{
 	Text: template.HTML("Empty"),
 }
 
-var phases_results []string
-
 var image_folder string = "/raw/"
 
-var now string = time.Now().String()
+var port string
+
+var database_connection string
+
+func GetVars() {
+	// Some env vars have proper defaults
+	port = os.Getenv("PORT")
+	if port == "" {
+		port = "9000"
+		log.Println("INFO: Using default " + port + " as PORT")
+	}
+	db_host := os.Getenv("DB_HOST")
+	if db_host == "" {
+		db_host = "0.0.0.0"
+		log.Println("INFO: Using default " + db_host + " as DB_HOST")
+	}
+	db_port := os.Getenv("DB_PORT")
+	if db_port == "" {
+		db_port = "3306"
+		log.Println("INFO: Using default " + db_port + " as DB_PORT")
+	}
+	// For the rest, we need to exit if they are not set up
+	db_user := os.Getenv("DB_USER")
+	if db_user == "" {
+		log.Println("ERROR: DB_USER environment variable is not set")
+		log.Println("  Remember to set the following variables: DB_USER, DB_PASS, DB_HOST , DB_PORT and DB_NAME")
+		os.Exit(1)
+	}
+	db_pass := os.Getenv("DB_PASS")
+	if db_pass == "" {
+		log.Println("ERROR: DB_PASS environment variable is not set")
+		log.Println("  Remember to set the following variables: DB_USER, DB_PASS, DB_HOST, DB_PORT and DB_NAME")
+		os.Exit(1)
+	}
+	db_name := os.Getenv("DB_NAME")
+	if db_name == "" {
+		log.Println("ERROR: DB_NAME environment variable is not set")
+		log.Println("  Remember to set the following variables: DB_USER, DB_PASS, DB_HOST, DB_PORT and DB_NAME")
+		os.Exit(1)
+	}
+
+	database_connection = db_user + ":" + db_pass + "@tcp(" + db_host + ":" + db_port + ")/" + db_name
+}
 
 func HealthHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
@@ -114,8 +154,6 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Called post")
 	log.Println(r.Form)
 	if r.Form.Get("restart") != "true" {
-		//phases_results = append(phases_results, r.Form.Get("selected"))
-		//log.Println(phases_results)
 		ManageResult(session, phase, r.Form.Get("selected"))
 	}
 	log.Println("phase cookie says " + strconv.Itoa(phase))
@@ -208,8 +246,7 @@ func PhaseDB(session string, phase int) (WebData, error) {
 	var DBerr error
 	var result WebData
 	phase_string := fmt.Sprintf("%03d", phase)
-	dbInfo := "root:secret@tcp(127.0.0.1:3306)/Paths"
-	db, err := sql.Open("mysql", dbInfo)
+	db, err := sql.Open("mysql", database_connection)
 	if err != nil {
 		DBerr = errors.New("Error running the query: " + err.Error())
 		log.Println("ERROR: " + err.Error())
@@ -263,7 +300,7 @@ func PhaseDB(session string, phase int) (WebData, error) {
 }
 
 func main() {
-	PORT := "9000"
-	log.Println("Serving on port " + PORT + "...")
-	log.Fatal(http.ListenAndServe(":"+PORT, Router()))
+	GetVars()
+	log.Println("Serving on port " + port + "...")
+	log.Fatal(http.ListenAndServe(":"+port, Router()))
 }

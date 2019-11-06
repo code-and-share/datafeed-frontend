@@ -48,7 +48,7 @@ TBD
   * Take the full path from the object -> select object content from the JSON lists :ok:
   * Get the use of a DB tested :ok:
   * Get different tests when the DB is unavailable
-  * Get DB config from ENV Variables
+  * Get config from ENV Variables :ok:
   * Containerize the app
   * Docker compose to also get DB up
   * Add a backend service that chooses the path to follow by the main program
