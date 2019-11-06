@@ -1,10 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/gorilla/mux"
 )
 
 func TestHealthHandler(t *testing.T) {
@@ -70,6 +73,16 @@ func TestPostHandler(t *testing.T) {
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			rr.Body.String(), not_expected)
 	}
+}
+
+// TODO: make this work
+func TestPhaseBackend(t *testing.T) {
+	r := mux.NewRouter()
+
+	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("##########################################")
+		PhaseBackend("0000000", 10, w)
+	}).Methods("GET")
 }
 
 func TestRouter(t *testing.T) {

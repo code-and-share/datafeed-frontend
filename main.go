@@ -16,6 +16,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Struct that stores elements that the frontend will show
 type WebData struct {
 	Title  string
 	Image1 string
@@ -226,7 +227,6 @@ func PhaseDB(session string, phase int) (WebData, error) {
 			DBerr = errors.New("Error running the query: " + err.Error())
 			log.Println("ERROR: " + err.Error())
 		}
-		fmt.Println("########################HERE")
 		var objects []PhaseObject
 		for select_phase.Next() {
 			var position int
