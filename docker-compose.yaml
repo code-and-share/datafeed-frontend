@@ -1,20 +1,25 @@
-mysql:
-  image: angelalonso/cns_mysql:v0.01
-  ports:
-   - "3306:3306"
-  environment:
-    MYSQL_ROOT_PASSWORD: secret
-  volumes:
-    - ./data:/docker-entrypoint-initdb.d
-    - ./mysql_data:/var/lib/mysql
-steps_datafeed:
-  image: angelalonso/cns_stepsdatafeed:v0.01
-  ports:
-   - "9000:9000"
-  environment:
-    PORT: 9000
-    DB_HOST: "mysql"
-    DB_USER: "root"
-    DB_PASS: "secret"
-    DB_NAME: "Paths"
-
+version: '3'
+services:
+  mysql:
+    image: angelalonso/cns_mysql:v0.01
+    ports:
+     - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+    networks:
+      - mysql_stepsdatafeed
+  steps_datafeed:
+    image: angelalonso/cns_stepsdatafeed:v0.01
+    ports:
+     - "9000:9000"
+    environment:
+      PORT: 9000
+      DB_HOST: "mysql"
+      DB_USER: "root"
+      DB_PASS: "secret"
+      DB_NAME: "Paths"
+    networks:
+      - mysql_stepsdatafeed
+networks:
+  mysql_stepsdatafeed:
+    external: false
