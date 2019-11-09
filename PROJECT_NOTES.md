@@ -49,8 +49,8 @@ TBD
   * Get the use of a DB tested :ok:
   * Get different tests when the DB is unavailable
   * Get config from ENV Variables :ok:
-  * Containerize the app
-  * Docker compose to also get DB up
+  * Containerize the app :ok:
+  * Docker compose to also get DB up :ok:
   * Add a backend service that chooses the path to follow by the main program
   * Make Webdata receive a flexible amount of objects
   * Adapt Css to the amount of objects received
