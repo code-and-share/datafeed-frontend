@@ -51,7 +51,9 @@ TBD
   * Get config from ENV Variables :ok:
   * Containerize the app :ok:
   * Docker compose to also get DB up :ok:
-  * Add a backend service that chooses the path to follow by the main program
+  * Add a backend service that can add paths, phases and objects
+  * Make the backend service also chooses the default path to follow by the main program
+  * Create a table of results
   * Make Webdata receive a flexible amount of objects
   * Adapt Css to the amount of objects received
   * Beautify result
