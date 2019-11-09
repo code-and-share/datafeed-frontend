@@ -1,7 +1,7 @@
 version: '3'
 services:
   mysql:
-    # https://github.com/code-and-share/data/tree/master/mysql
+    # https://github.com/code-and-share/datafeed-db/tree/master/mysql
     image: angelalonso/cns_mysql:v0.01
     ports:
      - "3306:3306"
