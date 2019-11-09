@@ -86,7 +86,7 @@ func GetVars() {
 	db_user := os.Getenv("DB_USER")
 	if db_user == "" {
 		log.Println("ERROR: DB_USER environment variable is not set")
-		log.Println("  Remember to set the following variables: DB_USER, DB_PASS, DB_HOST , DB_PORT and DB_NAME")
+		log.Println("  Remember to set the following variables: DB_USER, DB_PASS, DB_HOST, DB_PORT and DB_NAME")
 		os.Exit(1)
 	}
 	db_pass := os.Getenv("DB_PASS")
