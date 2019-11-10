@@ -51,6 +51,8 @@ TBD
   * Get config from ENV Variables :ok:
   * Containerize the app :ok:
   * Docker compose to also get DB up :ok:
+  * Show proper error when DB is not available
+  * Show proper error when an object cannot be found (index does not exist)
   * Add a backend service that can add paths, phases and objects
   * Make the backend service also chooses the default path to follow by the main program
   * Create a table of results
