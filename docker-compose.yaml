@@ -10,7 +10,7 @@ services:
     networks:
       - mysql_stepsdatafeed
   steps_datafeed:
-    image: angelalonso/cns_stepsdatafeed:v0.02
+    image: angelalonso/cns_stepsdatafeed:v0.03
     ports:
      - "9000:9000"
     environment:
@@ -19,6 +19,7 @@ services:
       DB_USER: "root"
       DB_PASS: "secret"
       DB_NAME: "Paths"
+      FILES_SOURCE: "http://0.0.0.0:8080/files/"
     networks:
       - mysql_stepsdatafeed
 networks:

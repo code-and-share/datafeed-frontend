@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
@@ -47,14 +48,12 @@ var results []Results
 
 var phase int = 1
 
-var files_url string = "http://0.0.0.0:8080/files/"
-
 var wd = WebData{
 	Title:  strconv.Itoa(phase),
-	Image1: files_url + "mountain001.png",
-	Image2: files_url + "forest001.png",
-	Image3: files_url + "rain001.png",
-	Image4: files_url + "beach001.png",
+	Image1: "mountain001.png",
+	Image2: "forest001.png",
+	Image3: "rain001.png",
+	Image4: "beach001.png",
 }
 
 var rd = ResultData{
@@ -64,6 +63,8 @@ var rd = ResultData{
 var port string
 
 var database_connection string
+
+var files_source string
 
 func GetVars() {
 	// Some env vars have proper defaults
@@ -86,23 +87,39 @@ func GetVars() {
 	db_user := os.Getenv("DB_USER")
 	if db_user == "" {
 		log.Println("ERROR: DB_USER environment variable is not set")
-		log.Println("  Remember to set the following variables: DB_USER, DB_PASS, DB_HOST, DB_PORT and DB_NAME")
+		log.Println("  Remember to set the following variables: DB_USER, DB_PASS, DB_HOST, DB_PORT, DBNAME and FILES_SOURCE")
 		os.Exit(1)
 	}
 	db_pass := os.Getenv("DB_PASS")
 	if db_pass == "" {
 		log.Println("ERROR: DB_PASS environment variable is not set")
-		log.Println("  Remember to set the following variables: DB_USER, DB_PASS, DB_HOST, DB_PORT and DB_NAME")
+		log.Println("  Remember to set the following variables: DB_USER, DB_PASS, DB_HOST, DB_PORT, DBNAME and FILES_SOURCE")
 		os.Exit(1)
 	}
 	db_name := os.Getenv("DB_NAME")
 	if db_name == "" {
 		log.Println("ERROR: DB_NAME environment variable is not set")
-		log.Println("  Remember to set the following variables: DB_USER, DB_PASS, DB_HOST, DB_PORT and DB_NAME")
+		log.Println("  Remember to set the following variables: DB_USER, DB_PASS, DB_HOST, DB_PORT, DBNAME and FILES_SOURCE")
 		os.Exit(1)
 	}
 
 	database_connection = db_user + ":" + db_pass + "@tcp(" + db_host + ":" + db_port + ")/" + db_name
+
+	files_source = os.Getenv("FILES_SOURCE")
+	if files_source == "" {
+		log.Println("ERROR: FILES_SOURCE environment variable is not set")
+		log.Println("  Remember to set the following variables: DB_USER, DB_PASS, DB_HOST, DB_PORT, DBNAME and FILES_SOURCE")
+		os.Exit(1)
+	}
+
+	wd = WebData{
+		Title:  strconv.Itoa(phase),
+		Image1: files_source + "mountain001.png",
+		Image2: files_source + "forest001.png",
+		Image3: files_source + "rain001.png",
+		Image4: files_source + "beach001.png",
+	}
+
 }
 
 func HealthHandler(w http.ResponseWriter, r *http.Request) {
@@ -171,6 +188,7 @@ func ContainsResultSession(session string) (bool, int) {
 }
 
 func ManageResult(session string, phase int, selected string) {
+	selected = strings.Replace(selected, files_source, "", -1)
 	session_exists, session_ix := ContainsResultSession(session)
 	if session_exists {
 		log.Println("session " + session + " exists")
@@ -283,10 +301,10 @@ func PhaseDB(session string, phase int) (WebData, error) {
 		// TODO: use the object position instead of a fixed index
 		result = WebData{
 			Title:  phase_string,
-			Image1: files_url + objects[0].object,
-			Image2: files_url + objects[1].object,
-			Image3: files_url + objects[2].object,
-			Image4: files_url + objects[3].object,
+			Image1: files_source + objects[0].object,
+			Image2: files_source + objects[1].object,
+			Image3: files_source + objects[2].object,
+			Image4: files_source + objects[3].object,
 		}
 	}
 
