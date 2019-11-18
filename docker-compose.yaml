@@ -2,7 +2,7 @@ version: '3'
 services:
   mysql:
     # https://github.com/code-and-share/datafeed-db/tree/master/mysql
-    image: angelalonso/cns_mysql:v0.01
+    image: angelalonso/cns_mysql:v0.02
     ports:
      - "3306:3306"
     environment:
@@ -10,7 +10,7 @@ services:
     networks:
       - mysql_stepsdatafeed
   steps_datafeed:
-    image: angelalonso/cns_stepsdatafeed:v0.01
+    image: angelalonso/cns_stepsdatafeed:v0.02
     ports:
      - "9000:9000"
     environment:

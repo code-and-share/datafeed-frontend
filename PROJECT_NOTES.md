@@ -20,6 +20,8 @@ I am not aiming at the complex models where input data can be very varied. Inste
 TBD
 # Objectives
 ## Specific
+* I want to be able to get files from remote (set source as variable) :ok:
+  * Make the url an environment variable
 * I want to be able to dynamically present images/text…(from now on objects) to click on.
   * Show a predefined group :ok:
   * Make objects clickable from now on :ok:

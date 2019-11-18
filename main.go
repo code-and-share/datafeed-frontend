@@ -47,19 +47,19 @@ var results []Results
 
 var phase int = 1
 
+var files_url string = "http://0.0.0.0:8080/files/"
+
 var wd = WebData{
 	Title:  strconv.Itoa(phase),
-	Image1: image_folder + "mountain001.jpg",
-	Image2: image_folder + "forest001.jpg",
-	Image3: image_folder + "rain001.jpg",
-	Image4: image_folder + "beach001.jpg",
+	Image1: files_url + "mountain001.png",
+	Image2: files_url + "forest001.png",
+	Image3: files_url + "rain001.png",
+	Image4: files_url + "beach001.png",
 }
 
 var rd = ResultData{
 	Text: template.HTML("Empty"),
 }
-
-var image_folder string = "/raw/"
 
 var port string
 
@@ -283,10 +283,10 @@ func PhaseDB(session string, phase int) (WebData, error) {
 		// TODO: use the object position instead of a fixed index
 		result = WebData{
 			Title:  phase_string,
-			Image1: image_folder + objects[0].object,
-			Image2: image_folder + objects[1].object,
-			Image3: image_folder + objects[2].object,
-			Image4: image_folder + objects[3].object,
+			Image1: files_url + objects[0].object,
+			Image2: files_url + objects[1].object,
+			Image3: files_url + objects[2].object,
+			Image4: files_url + objects[3].object,
 		}
 	}
 
