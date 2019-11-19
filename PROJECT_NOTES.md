@@ -21,8 +21,8 @@ TBD
 # Objectives
 ## Specific
 * I want to be able to get files from remote (set source as variable) :ok:
-  * Make the url an environment variable
-* I want to be able to dynamically present images/text…(from now on objects) to click on.
+  * Make the url an environment variable :ok:
+* I want to be able to dynamically present images/text…(from now on objects) to click on. :x:
   * Show a predefined group :ok:
   * Make objects clickable from now on :ok:
   * Receive selection :ok:
@@ -53,14 +53,14 @@ TBD
   * Get config from ENV Variables :ok:
   * Containerize the app :ok:
   * Docker compose to also get DB up :ok:
-  * Show proper error when DB is not available
-  * Show proper error when an object cannot be found (index does not exist)
-  * Add a backend service that can add paths, phases and objects
-  * Make the backend service also chooses the default path to follow by the main program
-  * Create a table of results
-  * Make Webdata receive a flexible amount of objects
-  * Adapt Css to the amount of objects received
-  * Beautify result
+  * Show proper error when DB is not available :x:
+  * Show proper error when an object cannot be found (index does not exist) :x:
+  * Add a backend service that can add paths, phases and objects :x:
+  * Make the backend service also chooses the default path to follow by the main program :x:
+  * Create a table of results :x:
+  * Make Webdata receive a flexible amount of objects :x:
+  * Adapt Css to the amount of objects received :x:
+  * Beautify result :x:
   * ...
 * Those objects are presented in groups of 4, but could be more or less than that. Important is that the user has as little bias as possible.
 * What the user selects on groups (1..n) defines the objects presented on group n+1. Group 1 should also be random.
