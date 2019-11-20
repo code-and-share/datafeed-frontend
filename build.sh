@@ -12,7 +12,7 @@ if [ -z $2 ]; then
   exit 2
 fi
 
-APP="cns_stepsdatafeed"
+APP="cns_datafeed_frontend"
 VERSION=$2
 DOCKERUSER=$1
 

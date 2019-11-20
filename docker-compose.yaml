@@ -2,15 +2,15 @@ version: '3'
 services:
   mysql:
     # https://github.com/code-and-share/datafeed-db/tree/master/mysql
-    image: angelalonso/cns_mysql:v0.03
+    image: angelalonso/cns_datafeed_mysql:v0.01
     ports:
      - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: secret
     networks:
       - mysql_stepsdatafeed
-  steps_datafeed:
-    image: angelalonso/cns_stepsdatafeed:v0.03
+  datafeed_frontend:
+    image: angelalonso/cns_datafeed_frontend:v0.01
     ports:
      - "9000:9000"
     environment:
@@ -20,6 +20,18 @@ services:
       DB_PASS: "secret"
       DB_NAME: "Paths"
       FILES_SOURCE: "http://0.0.0.0:8080/files/"
+    networks:
+      - mysql_stepsdatafeed
+  datafeed_backend:
+    image: angelalonso/cns_datafeed_backend:v0.01
+    ports:
+     - "8080:8080"
+    environment:
+      DB_HOST: "mysql"
+      DB_USER: "root"
+      DB_PASS: "secret"
+      DB_NAME: "Paths"
+      DB_PORT: "3306"
     networks:
       - mysql_stepsdatafeed
 networks:
