@@ -13,8 +13,8 @@ import (
 	"strconv"
 	"strings"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
 )
 
 // Struct that stores elements that the frontend will show
@@ -66,49 +66,63 @@ var database_connection string
 
 var files_source string
 
+func dbConnPostgres() (db *sql.DB) {
+	dbDriver := "postgres"
+	dbUser := os.Getenv("DB_PSQL_USER")
+	dbPass := os.Getenv("DB_PSQL_PASS")
+	dbName := os.Getenv("DB_PSQL_NAME")
+	dbHost := os.Getenv("DB_PSQL_HOST")
+	dbPort := os.Getenv("DB_PSQL_PORT")
+	db, err := sql.Open(dbDriver, "postgres://"+dbUser+":"+dbPass+"@"+dbHost+":"+dbPort+"/"+dbName+"?sslmode=disable")
+	if err != nil {
+		panic(err.Error())
+	}
+	return db
+}
+
 func GetVars() {
 	// Some env vars have proper defaults
+	/*
+		db_host := os.Getenv("DB_HOST")
+		if db_host == "" {
+			db_host = "0.0.0.0"
+			log.Println("INFO: Using default " + db_host + " as DB_HOST")
+		}
+		db_port := os.Getenv("DB_PORT")
+		if db_port == "" {
+			db_port = "3306"
+			log.Println("INFO: Using default " + db_port + " as DB_PORT")
+		}
+		// For the rest, we need to exit if they are not set up
+		db_user := os.Getenv("DB_USER")
+		if db_user == "" {
+			log.Println("ERROR: DB_USER environment variable is not set")
+			log.Println("  Remember to set the following variables: DB_USER, DB_PASS, DB_HOST, DB_PORT, DBNAME and FILES_SOURCE")
+			os.Exit(1)
+		}
+		db_pass := os.Getenv("DB_PASS")
+		if db_pass == "" {
+			log.Println("ERROR: DB_PASS environment variable is not set")
+			log.Println("  Remember to set the following variables: DB_USER, DB_PASS, DB_HOST, DB_PORT, DBNAME and FILES_SOURCE")
+			os.Exit(1)
+		}
+		db_name := os.Getenv("DB_NAME")
+		if db_name == "" {
+			log.Println("ERROR: DB_NAME environment variable is not set")
+			log.Println("  Remember to set the following variables: DB_USER, DB_PASS, DB_HOST, DB_PORT, DBNAME and FILES_SOURCE")
+			os.Exit(1)
+		}
+		database_connection = db_user + ":" + db_pass + "@tcp(" + db_host + ":" + db_port + ")/" + db_name
+	*/
+	//database_connection = dbConnPostgres()
 	port = os.Getenv("PORT")
 	if port == "" {
 		port = "9000"
 		log.Println("INFO: Using default " + port + " as PORT")
 	}
-	db_host := os.Getenv("DB_HOST")
-	if db_host == "" {
-		db_host = "0.0.0.0"
-		log.Println("INFO: Using default " + db_host + " as DB_HOST")
-	}
-	db_port := os.Getenv("DB_PORT")
-	if db_port == "" {
-		db_port = "3306"
-		log.Println("INFO: Using default " + db_port + " as DB_PORT")
-	}
-	// For the rest, we need to exit if they are not set up
-	db_user := os.Getenv("DB_USER")
-	if db_user == "" {
-		log.Println("ERROR: DB_USER environment variable is not set")
-		log.Println("  Remember to set the following variables: DB_USER, DB_PASS, DB_HOST, DB_PORT, DBNAME and FILES_SOURCE")
-		os.Exit(1)
-	}
-	db_pass := os.Getenv("DB_PASS")
-	if db_pass == "" {
-		log.Println("ERROR: DB_PASS environment variable is not set")
-		log.Println("  Remember to set the following variables: DB_USER, DB_PASS, DB_HOST, DB_PORT, DBNAME and FILES_SOURCE")
-		os.Exit(1)
-	}
-	db_name := os.Getenv("DB_NAME")
-	if db_name == "" {
-		log.Println("ERROR: DB_NAME environment variable is not set")
-		log.Println("  Remember to set the following variables: DB_USER, DB_PASS, DB_HOST, DB_PORT, DBNAME and FILES_SOURCE")
-		os.Exit(1)
-	}
-
-	database_connection = db_user + ":" + db_pass + "@tcp(" + db_host + ":" + db_port + ")/" + db_name
-
 	files_source = os.Getenv("FILES_SOURCE")
 	if files_source == "" {
 		log.Println("ERROR: FILES_SOURCE environment variable is not set")
-		log.Println("  Remember to set the following variables: DB_USER, DB_PASS, DB_HOST, DB_PORT, DBNAME and FILES_SOURCE")
 		os.Exit(1)
 	}
 
@@ -264,19 +278,22 @@ func PhaseDB(session string, phase int) (WebData, error) {
 	var DBerr error
 	var result WebData
 	phase_string := fmt.Sprintf("%03d", phase)
-	db, err := sql.Open("mysql", database_connection)
+	db := dbConnPostgres()
+	/*db, err := sql.Open("mysql", database_connection)
 	if err != nil {
 		DBerr = errors.New("Error running the query: " + err.Error())
 		log.Println("ERROR: " + err.Error())
 	}
+	*/
 	defer db.Close()
 
-	err = db.Ping()
+	err := db.Ping()
 	if err != nil {
 		DBerr = errors.New("Error reaching the DB: " + err.Error())
 		log.Println("ERROR: " + err.Error())
 	} else {
-		select_phase, err := db.Query("SELECT t1.pos, objects.content FROM objects, phases, JSON_TABLE(phases.objects, '$[*]' COLUMNS(pos INT PATH '$.position', obj VARCHAR(255) PATH '$.object')) AS t1 WHERE phases.id in (SELECT phase_id from paths WHERE name = '" + chosen_path + "' AND phase_order = " + strconv.Itoa(phase) + ") AND objects.name = t1.obj COLLATE utf8mb4_general_ci;")
+		//select_phase, err := db.Query("SELECT t1.pos, objects.content FROM objects, phases, JSON_TABLE(phases.objects, '$[*]' COLUMNS(pos INT PATH '$.position', obj VARCHAR(255) PATH '$.object')) AS t1 WHERE phases.id in (SELECT phase_id from paths WHERE name = '" + chosen_path + "' AND phase_order = " + strconv.Itoa(phase) + ") AND objects.name = t1.obj COLLATE utf8mb4_general_ci;")
+		select_phase, err := db.Query("SELECT j->>'position' pos, objects.content FROM (select (json_array_elements(objects)) j from phases WHERE phases.id in (SELECT phase_id from paths WHERE name = '" + chosen_path + "' and phase_order = '" + strconv.Itoa(phase) + "')) obj, objects WHERE objects.name = j->>'object';")
 		defer select_phase.Close()
 		if err != nil {
 			DBerr = errors.New("Error running the query: " + err.Error())

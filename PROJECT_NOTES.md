@@ -53,6 +53,7 @@ TBD
   * Get config from ENV Variables :ok:
   * Containerize the app :ok:
   * Docker compose to also get DB up :ok:
+  * Move to postgresql :ok:
   * Show proper error when DB is not available :x:
   * Show proper error when an object cannot be found (index does not exist) :x:
   * Add a backend service that can add paths, phases and objects :x:
