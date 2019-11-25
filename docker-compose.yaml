@@ -15,7 +15,7 @@ services:
       DB_PSQL_NAME: "feed"
       DB_PSQL_USER: "feed"
       DB_PSQL_PASS: "feeduser123"
-      DB_PSQL_HOST: "0.0.0.0"
+      DB_PSQL_HOST: "postgres"
       DB_PSQL_PORT: "5432"
       PORT: "9000"
       FILES_SOURCE: "http://0.0.0.0:8080/files/"
@@ -29,7 +29,7 @@ services:
       DB_PSQL_NAME: "feed"
       DB_PSQL_USER: "feed"
       DB_PSQL_PASS: "feeduser123"
-      DB_PSQL_HOST: "0.0.0.0"
+      DB_PSQL_HOST: "postgres"
       DB_PSQL_PORT: "5432"
     networks:
       - network_stepsdatafeed
