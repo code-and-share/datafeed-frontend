@@ -1,39 +1,38 @@
 version: '3'
 services:
-  mysql:
-    # https://github.com/code-and-share/datafeed-db/tree/master/mysql
-    image: angelalonso/cns_datafeed_mysql:v0.01
+  postgres:
+    # https://github.com/code-and-share/datafeed-db/tree/master/postgresql
+    image: angelalonso/cns_datafeed_postgres:v0.01
     ports:
-     - "3306:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: secret
+     - "5432:5432"
     networks:
-      - mysql_stepsdatafeed
+      - network_stepsdatafeed
   datafeed_frontend:
-    image: angelalonso/cns_datafeed_frontend:v0.01
+    image: angelalonso/cns_datafeed_frontend:v0.10
     ports:
      - "9000:9000"
     environment:
-      PORT: 9000
-      DB_HOST: "mysql"
-      DB_USER: "root"
-      DB_PASS: "secret"
-      DB_NAME: "Paths"
+      DB_PSQL_NAME: "feed"
+      DB_PSQL_USER: "feed"
+      DB_PSQL_PASS: "feeduser123"
+      DB_PSQL_HOST: "0.0.0.0"
+      DB_PSQL_PORT: "5432"
+      PORT: "9000"
       FILES_SOURCE: "http://0.0.0.0:8080/files/"
     networks:
-      - mysql_stepsdatafeed
+      - network_stepsdatafeed
   datafeed_backend:
-    image: angelalonso/cns_datafeed_backend:v0.01
+    image: angelalonso/cns_datafeed_backend:v0.10
     ports:
      - "8080:8080"
     environment:
-      DB_HOST: "mysql"
-      DB_USER: "root"
-      DB_PASS: "secret"
-      DB_NAME: "Paths"
-      DB_PORT: "3306"
+      DB_PSQL_NAME: "feed"
+      DB_PSQL_USER: "feed"
+      DB_PSQL_PASS: "feeduser123"
+      DB_PSQL_HOST: "0.0.0.0"
+      DB_PSQL_PORT: "5432"
     networks:
-      - mysql_stepsdatafeed
+      - network_stepsdatafeed
 networks:
-  mysql_stepsdatafeed:
+  network_stepsdatafeed:
     external: false
