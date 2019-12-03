@@ -2,19 +2,19 @@ version: '3'
 services:
   postgres:
     # https://github.com/code-and-share/datafeed-db/tree/master/postgresql
-    image: angelalonso/cns_datafeed_postgres:v0.01
+    image: angelalonso/cns_datafeed_postgres:v0.02
     ports:
      - "5432:5432"
     networks:
       - network_stepsdatafeed
   datafeed_frontend:
-    image: angelalonso/cns_datafeed_frontend:v0.10
+    image: angelalonso/cns_datafeed_frontend:v0.12
     ports:
      - "9000:9000"
     environment:
-      DB_PSQL_NAME: "feed"
-      DB_PSQL_USER: "feed"
-      DB_PSQL_PASS: "feeduser123"
+      DB_NAME_FILE: "secrets/db_feed_name"
+      DB_USER_FILE: "secrets/db_feed_user"
+      DB_PASS_FILE: "secrets/db_feed_pass"
       DB_PSQL_HOST: "postgres"
       DB_PSQL_PORT: "5432"
       PORT: "9000"
@@ -22,13 +22,13 @@ services:
     networks:
       - network_stepsdatafeed
   datafeed_backend:
-    image: angelalonso/cns_datafeed_backend:v0.10
+    image: angelalonso/cns_datafeed_backend:v0.12
     ports:
      - "8080:8080"
     environment:
-      DB_PSQL_NAME: "feed"
-      DB_PSQL_USER: "feed"
-      DB_PSQL_PASS: "feeduser123"
+      DB_NAME_FILE: "secrets/db_feed_name"
+      DB_USER_FILE: "secrets/db_feed_user"
+      DB_PASS_FILE: "secrets/db_feed_pass"
       DB_PSQL_HOST: "postgres"
       DB_PSQL_PORT: "5432"
     networks:
