@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -66,11 +67,19 @@ var database_connection string
 
 var files_source string
 
+func getVarFromFile(f string) string {
+	buf, err := ioutil.ReadFile(f)
+	if err != nil {
+		return ""
+	}
+	return strings.TrimSuffix(string(buf), "\n")
+}
+
 func dbConnPostgres() (db *sql.DB) {
 	dbDriver := "postgres"
-	dbUser := os.Getenv("DB_PSQL_USER")
-	dbPass := os.Getenv("DB_PSQL_PASS")
-	dbName := os.Getenv("DB_PSQL_NAME")
+	dbName := getVarFromFile(os.Getenv("DB_NAME_FILE"))
+	dbUser := getVarFromFile(os.Getenv("DB_USER_FILE"))
+	dbPass := getVarFromFile(os.Getenv("DB_PASS_FILE"))
 	dbHost := os.Getenv("DB_PSQL_HOST")
 	dbPort := os.Getenv("DB_PSQL_PORT")
 	db, err := sql.Open(dbDriver, "postgres://"+dbUser+":"+dbPass+"@"+dbHost+":"+dbPort+"/"+dbName+"?sslmode=disable")
@@ -81,40 +90,6 @@ func dbConnPostgres() (db *sql.DB) {
 }
 
 func GetVars() {
-	// Some env vars have proper defaults
-	/*
-		db_host := os.Getenv("DB_HOST")
-		if db_host == "" {
-			db_host = "0.0.0.0"
-			log.Println("INFO: Using default " + db_host + " as DB_HOST")
-		}
-		db_port := os.Getenv("DB_PORT")
-		if db_port == "" {
-			db_port = "3306"
-			log.Println("INFO: Using default " + db_port + " as DB_PORT")
-		}
-		// For the rest, we need to exit if they are not set up
-		db_user := os.Getenv("DB_USER")
-		if db_user == "" {
-			log.Println("ERROR: DB_USER environment variable is not set")
-			log.Println("  Remember to set the following variables: DB_USER, DB_PASS, DB_HOST, DB_PORT, DBNAME and FILES_SOURCE")
-			os.Exit(1)
-		}
-		db_pass := os.Getenv("DB_PASS")
-		if db_pass == "" {
-			log.Println("ERROR: DB_PASS environment variable is not set")
-			log.Println("  Remember to set the following variables: DB_USER, DB_PASS, DB_HOST, DB_PORT, DBNAME and FILES_SOURCE")
-			os.Exit(1)
-		}
-		db_name := os.Getenv("DB_NAME")
-		if db_name == "" {
-			log.Println("ERROR: DB_NAME environment variable is not set")
-			log.Println("  Remember to set the following variables: DB_USER, DB_PASS, DB_HOST, DB_PORT, DBNAME and FILES_SOURCE")
-			os.Exit(1)
-		}
-		database_connection = db_user + ":" + db_pass + "@tcp(" + db_host + ":" + db_port + ")/" + db_name
-	*/
-	//database_connection = dbConnPostgres()
 	port = os.Getenv("PORT")
 	if port == "" {
 		port = "9000"

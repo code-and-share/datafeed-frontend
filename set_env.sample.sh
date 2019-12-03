@@ -1,9 +1,9 @@
 #!/bin/bash
 
 #Postgresql profile
-export DB_PSQL_NAME="test"
-export DB_PSQL_USER="test"
-export DB_PSQL_PASS="testpass"
+export DB_NAME_FILE="secrets/db_feed_name"
+export DB_USER_FILE="secrets/db_feed_user"
+export DB_PASS_FILE="secrets/db_feed_pass"
 export DB_PSQL_HOST="0.0.0.0"
 export DB_PSQL_PORT="5432"
 
