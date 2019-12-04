@@ -9,6 +9,7 @@ export DB_PSQL_PORT="5432"
 
 # other
 export PORT="9000"
+export OWN_URL="http://0.0.0.0:9001"
 export FILES_SOURCE="http://0.0.0.0:8080/files/"
 
 

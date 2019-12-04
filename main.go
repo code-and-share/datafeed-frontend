@@ -20,6 +20,7 @@ import (
 
 // Struct that stores elements that the frontend will show
 type WebData struct {
+	Url    string
 	Title  string
 	Image1 string
 	Image2 string
@@ -28,6 +29,7 @@ type WebData struct {
 }
 
 type ResultData struct {
+	Url  string
 	Text template.HTML
 }
 
@@ -49,7 +51,9 @@ var results []Results
 
 var phase int = 1
 
+var own_url string = "http://0.0.0.0:9000"
 var wd = WebData{
+	Url:    own_url,
 	Title:  strconv.Itoa(phase),
 	Image1: "mountain001.png",
 	Image2: "forest001.png",
@@ -58,6 +62,7 @@ var wd = WebData{
 }
 
 var rd = ResultData{
+	Url:  own_url,
 	Text: template.HTML("Empty"),
 }
 
@@ -95,6 +100,13 @@ func GetVars() {
 		port = "9000"
 		log.Println("INFO: Using default " + port + " as PORT")
 	}
+	own_url = os.Getenv("OWN_URL")
+	/*
+		if own_url == "" {
+			own_url = "http://0.0.0.0:9000"
+			log.Println("INFO: Using default " + own_url + " as OWN_URL")
+		}
+	*/
 	files_source = os.Getenv("FILES_SOURCE")
 	if files_source == "" {
 		log.Println("ERROR: FILES_SOURCE environment variable is not set")
@@ -102,6 +114,7 @@ func GetVars() {
 	}
 
 	wd = WebData{
+		Url:    own_url,
 		Title:  strconv.Itoa(phase),
 		Image1: files_source + "mountain001.png",
 		Image2: files_source + "forest001.png",
@@ -237,6 +250,7 @@ func PhaseBackend(session string, phase int, w http.ResponseWriter) {
 				result_all = result_all + strconv.Itoa(v.position) + ` -> ` + v.selected + `<br>`
 			}
 			rd = ResultData{
+				Url:  own_url,
 				Text: template.HTML(result_all),
 			}
 		}

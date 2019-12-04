@@ -47,7 +47,7 @@
         delCookie("session_id")
         setCookie("phase", 1, 1)
       }
-      var url = "http://0.0.0.0:9000/post"
+      var url = "{{.Url}}/post"
       var xhr = new XMLHttpRequest();
       xhr.open("POST", url, false);
       xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
